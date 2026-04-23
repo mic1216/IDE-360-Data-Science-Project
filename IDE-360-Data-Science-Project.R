@@ -1,26 +1,25 @@
 # INSTALL PACKAGES
-install.packages("psych")
+#install.packages("psych")
 library("psych")
 
 # IMPORTING DATA
 
 data <- read.csv("HTOPS_HPS_2502_PUF.csv")
 
+# CLEANING DATA AND CREATING SUBSET
+data <- subset(data, ANXIOUS != -99 & (NDX14_FOOD == -99 | NDX14_FOOD == 1))
+
 # EXTRACTING VARIABLES OF INTEREST FROM THE DATA SETS
 
 #explanatory variables
-foodNeeds <- (data$NDX14_FOOD != -99) #Inviduals whose most immediate need is food
-shelterNeeds<- (data$NDX14_SHELTER != -99) #Inviduals whose most immediate need is shelter
-medicalNeeds <- (data$NDX14_MEDICAL!= -99) #Inviduals whose most immediate need is medical
-emotionalNeeds <- (data$NDX14_EMOTIONAL != -99) #Inviduals whose most immediate need is emotional
-waterNeeds <- (data$NDX14_FRESHWATER != -99) #Inviduals whose most immediate need is fresh water
+foodNeeds <- data$NDX14_FOOD #Inviduals whose most immediate need is food
+shelterNeeds<- data$NDX14_SHELTER #Inviduals whose most immediate need is shelter
+medicalNeeds <- data$NDX14_MEDICAL #Inviduals whose most immediate need is medical
+emotionalNeeds <- data$NDX14_EMOTIONAL #Inviduals whose most immediate need is emotional
+waterNeeds <- data$NDX14_FRESHWATER #Inviduals whose most immediate need is fresh water
 
 #response variable
 anxiety <- data$ANXIOUS #How anxious an individual has felt over the past two weeks
-
-# CLEANING DATA
-
-
 
 # EXPLORATORY DATA ANALYSIS
 
@@ -50,7 +49,7 @@ print(summary(waterNeeds))
 print(describe(waterNeeds))
 cat("\n")
 
-print("anxiety")
+print("Anxiety")
 print(summary(anxiety))
 print(describe(anxiety))
 cat("\n")
