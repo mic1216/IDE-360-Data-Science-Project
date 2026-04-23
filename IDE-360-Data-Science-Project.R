@@ -1,5 +1,7 @@
+# INSTALL PACKAGES
 install.packages("psych")
 library("psych")
+
 # IMPORTING DATA
 
 data <- read.csv("HTOPS_HPS_2502_PUF.csv")
