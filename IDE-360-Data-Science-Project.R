@@ -1,5 +1,9 @@
-# INSTALL PACKAGES
-#install.packages("psych")
+# INSTALL AND LOAD PACKAGES
+# NB: IF PSYCH NOT INSTALLED, UNCOMMENT NEXT LINE. RECOMMENT TO AVOID ERROR 
+# MESSAGES
+
+#install.packages("psych") 
+
 library("psych")
 
 # IMPORTING DATA
