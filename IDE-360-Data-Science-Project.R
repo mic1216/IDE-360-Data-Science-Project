@@ -1,10 +1,13 @@
 # INSTALL AND LOAD PACKAGES
 
-  # NB: IF PSYCH NOT INSTALLED, UNCOMMENT NEXT LINE OF CODE. RECOMMENT TO AVOID 
+  # NB: IF PACKAGE NOT INSTALLED, UNCOMMENT NEXT LINE OF CODE. RECOMMENT TO AVOID 
   # ERROR MESSAGES
   
   #install.packages("psych")
-  
+  #install.packages("caTools") 
+  #install.packages("VGAM")
+  library(VGAM)
+  library(caTools)
   library("psych")
 
 # IMPORTING DATA
@@ -27,13 +30,18 @@
   medicalNeeds <- data$NDX14_MEDICAL #Inviduals whose most immediate need is medical
   emotionalNeeds <- data$NDX14_EMOTIONAL #Inviduals whose most immediate need is emotional
   waterNeeds <- data$NDX14_FRESHWATER #Inviduals whose most immediate need is fresh water
-
+  
+   
   #response variable
   anxiety <- data$ANXIOUS #How anxious an individual has felt over the past two weeks
+  
+  #creating new data table, exclusively w/ variables of intrests
+  data <- data.frame(foodNeeds,shelterNeeds,medicalNeeds,emotionalNeeds,
+                     waterNeeds,anxiety)
 
 # EXPLORATORY DATA ANALYSIS
 
-  # summaries
+  #SUMMARIES
   print("Food Needs")
   print(summary(foodNeeds))
   print(describe(foodNeeds))
@@ -63,4 +71,33 @@
   print(summary(anxiety))
   print(describe(anxiety))
   cat("\n")
+  
+  #DATA SETUP
+  
+  
+    #need: explanatory variable; 1 = foodNeeds, 2 = shelterNeeds, 
+    #3 = medicalNeeds, #4 = emotionalNeeds, 5 = waterNeeds
+    altFoodAnx <- subset(data, foodNeeds == 1)
+    
+    foodAnx <- c()
+    for(row in seq_len(nrow(data))) {
+      need <- 0 
+      while(need <= 5){
+        need <- need + 1
+        if(data[row,need])
+        {
+          if(need == 1){
+            foodAnx <- append(foodAnx,data[row,6])
+          }
+        }
+      }
+    }
+  
+  #plots
+  boxplot()
 
+# LOGISTIC REGRESSION ANALYSIS
+  
+  #splitting dataset
+  
+  split <- sample.split(data, SplitRatio = 0.8)
