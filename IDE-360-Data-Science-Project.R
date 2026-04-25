@@ -42,33 +42,8 @@
 # EXPLORATORY DATA ANALYSIS
 
   #SUMMARIES
-  print("Food Needs")
-  print(summary(foodNeeds))
-  print(describe(foodNeeds))
-  cat("\n")
   
-  print("Shelter Needs")
-  print(summary(shelterNeeds))
-  print(describe(shelterNeeds))
-  cat("\n")
-  
-  print("Medical Needs")
-  print(summary(medicalNeeds))
-  print(describe(medicalNeeds))
-  cat("\n")
-  
-  print("Emotional Needs")
-  print(summary(emotionalNeeds))
-  print(describe(emotionalNeeds))
-  cat("\n")
-  
-  print("Water Needs")
-  print(summary(waterNeeds))
-  print(describe(waterNeeds))
-  cat("\n")
-  
-  print("Anxiety")
-  print(summary(anxiety))
+  print("Anxiety Description")
   print(describe(anxiety))
   cat("\n")
   
@@ -76,16 +51,43 @@
     
     #separating data by need response
     
-    foodAnx <- subset(data, foodNeeds == 1)
-    shelterAnx <- subset(data, shelterNeeds == 1)
-    medicalAnx <- subset(data, medicalNeeds == 1)
-    emotionalAnx <- subset(data, emotionalNeeds == 1)
-    waterAnx <- subset(data, waterNeeds == 1)
+    foodAnx <- subset(data, foodNeeds == 1) #subset for individuals who have food need
+    shelterAnx <- subset(data, shelterNeeds == 1) #subset for individuals who have shelter need
+    medicalAnx <- subset(data, medicalNeeds == 1) #subset for individuals who have medical need
+    emotionalAnx <- subset(data, emotionalNeeds == 1) #subset for individuals who have emotional need
+    waterAnx <- subset(data, waterNeeds == 1) #subset for individuals who have fresh water need
+    
+    #concatenating explanatory variables into one categorical variable
+    food <- rep("food", times = nrow(foodAnx))
+    shelter <- rep("shelter", times = nrow(shelterAnx))
+    medical <- rep("medical", times = nrow(medicalAnx))
+    emotional <- rep("emotional", times = nrow(emotionalAnx))
+    water <- rep("water", times = nrow(waterAnx))
+    
+    categories <- c(food,shelter,medical,emotional,water)
+    anxByCat <- c(foodAnx[,6],shelterAnx[,6],medicalAnx[,6],emotionalAnx[,6],
+                  waterAnx[,6])
+    
+    #making new datatable to show anxiety by category
+    dataByCat <- data.frame(categories,anxByCat)
     
   
-  #plots
+  #PLOTS
 
-  boxplot()
+    boxplot(anxByCat ~ categories, data = dataByCat,
+            main = "Anxiety by Need",
+            xlab = "Need",
+            ylab = "Anxiety")
+    hist(foodAnx[,6],main="Anxiety for Individuals with Food Needs")
+    hist(shelterAnx[,6],main="Anxiety for Individuals with Shelter Needs",
+         xlab="Anxiety")
+    hist(medicalAnx[,6],main="Anxiety for Individuals with Medical Needs",
+         xlab="Anxiety")
+    hist(emotionalAnx[,6],main="Anxiety for Individuals with Emotional Needs",
+         xlab="Anxiety")
+    hist(waterAnx[,6],main="Anxiety for Individuals with Water Needs",
+         xlab="Anxiety")
+    
 
 # LOGISTIC REGRESSION ANALYSIS
   
