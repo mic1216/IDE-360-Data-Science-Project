@@ -73,27 +73,18 @@
   cat("\n")
   
   #DATA SETUP
-  
-  
-    #need: explanatory variable; 1 = foodNeeds, 2 = shelterNeeds, 
-    #3 = medicalNeeds, #4 = emotionalNeeds, 5 = waterNeeds
-    altFoodAnx <- subset(data, foodNeeds == 1)
     
-    foodAnx <- c()
-    for(row in seq_len(nrow(data))) {
-      need <- 0 
-      while(need <= 5){
-        need <- need + 1
-        if(data[row,need])
-        {
-          if(need == 1){
-            foodAnx <- append(foodAnx,data[row,6])
-          }
-        }
-      }
-    }
+    #separating data by need response
+    
+    foodAnx <- subset(data, foodNeeds == 1)
+    shelterAnx <- subset(data, shelterNeeds == 1)
+    medicalAnx <- subset(data, medicalNeeds == 1)
+    emotionalAnx <- subset(data, emotionalNeeds == 1)
+    waterAnx <- subset(data, waterNeeds == 1)
+    
   
   #plots
+
   boxplot()
 
 # LOGISTIC REGRESSION ANALYSIS
