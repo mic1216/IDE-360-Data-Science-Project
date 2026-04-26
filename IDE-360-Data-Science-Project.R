@@ -49,7 +49,7 @@
   
   #DATA SETUP
     
-    #separating data by need response
+    # SEPARATING DATA BY NEED RESPONSE
     
     foodAnx <- subset(data, foodNeeds == 1) #subset for individuals who have food need
     shelterAnx <- subset(data, shelterNeeds == 1) #subset for individuals who have shelter need
@@ -57,7 +57,7 @@
     emotionalAnx <- subset(data, emotionalNeeds == 1) #subset for individuals who have emotional need
     waterAnx <- subset(data, waterNeeds == 1) #subset for individuals who have fresh water need
     
-    #concatenating explanatory variables into one categorical variable
+    # CONCATENATING EXPLANATORY VARIABLES INTO ONE CATEGORICAL VARIABLE
     food <- rep("food", times = nrow(foodAnx))
     shelter <- rep("shelter", times = nrow(shelterAnx))
     medical <- rep("medical", times = nrow(medicalAnx))
@@ -78,7 +78,10 @@
             main = "Anxiety by Need",
             xlab = "Need",
             ylab = "Anxiety")
-    hist(foodAnx[,6],main="Anxiety for Individuals with Food Needs")
+    
+    par(mfrow = c(2, 3))
+    hist(foodAnx[,6],main="Anxiety for Individuals with Food Needs",
+         xlab="Anxiety")
     hist(shelterAnx[,6],main="Anxiety for Individuals with Shelter Needs",
          xlab="Anxiety")
     hist(medicalAnx[,6],main="Anxiety for Individuals with Medical Needs",
@@ -91,6 +94,9 @@
 
 # LOGISTIC REGRESSION ANALYSIS
   
-  #splitting dataset
+  #splitting data set
   
   split <- sample.split(data, SplitRatio = 0.8)
+  
+  trainData <- subset(data, split == "TRUE")
+  testData <- subset(data, split == "FALSE")
