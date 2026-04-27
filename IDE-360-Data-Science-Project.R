@@ -73,7 +73,6 @@
     
   
   #PLOTS
-
     boxplot(anxByCat ~ categories, data = dataByCat,
             main = "Anxiety by Need",
             xlab = "Need",
@@ -94,9 +93,38 @@
 
 # LOGISTIC REGRESSION ANALYSIS
   
-  #splitting data set
+  # SPLITTING DATA SET
   
   split <- sample.split(data, SplitRatio = 0.8)
   
   trainData <- subset(data, split == "TRUE")
   testData <- subset(data, split == "FALSE")
+  
+  # MODEL
+  model <- vglm(anxiety ~ foodNeeds + shelterNeeds + medicalNeeds + 
+                  emotionalNeeds + waterNeeds,
+                family = multinomial, xdata = trainData)
+  
+  #training
+  predicted_probs <- predict(model, type = "response")
+  predicted_classes <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 1, which.max)])
+  
+  #applying
+  newProbs <- predict(model, newdata = testData, type = "response")
+  predictions <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 1, which.max)])
+  
+  print("predictions")
+  print(describe(predictions))
+  
+# VERIFICATION
+  
+  #histograms
+  par(mfrow = c(2, 3))
+  hist(anxiety,main="Actual Anxiety",
+       xlab="Anxiety")
+  hist(predictions,main="Predicted Anxiety",
+       xlab="Anxiety")
+  
+  #confusion matrix
+  
+  
