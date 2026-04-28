@@ -31,7 +31,6 @@
   shelterNeeds<- data$NDX14_SHELTER #Inviduals whose most immediate need is shelter
   medicalNeeds <- data$NDX14_MEDICAL #Inviduals whose most immediate need is medical
   emotionalNeeds <- data$NDX14_EMOTIONAL #Inviduals whose most immediate need is emotional
-  waterNeeds <- data$NDX14_FRESHWATER #Inviduals whose most immediate need is fresh water
   
    
   #response variable
@@ -39,7 +38,7 @@
   
   #creating new data table, exclusively w/ variables of intrests
   data <- data.frame(foodNeeds,shelterNeeds,medicalNeeds,emotionalNeeds,
-                     waterNeeds,anxiety)
+                     anxiety)
 
 # EXPLORATORY DATA ANALYSIS
 
@@ -57,14 +56,12 @@
     shelterAnx <- subset(data, shelterNeeds == 1) #subset for individuals who have shelter need
     medicalAnx <- subset(data, medicalNeeds == 1) #subset for individuals who have medical need
     emotionalAnx <- subset(data, emotionalNeeds == 1) #subset for individuals who have emotional need
-    waterAnx <- subset(data, waterNeeds == 1) #subset for individuals who have fresh water need
     
     # CONCATENATING EXPLANATORY VARIABLES INTO ONE CATEGORICAL VARIABLE
     food <- rep("food", times = nrow(foodAnx))
     shelter <- rep("shelter", times = nrow(shelterAnx))
     medical <- rep("medical", times = nrow(medicalAnx))
     emotional <- rep("emotional", times = nrow(emotionalAnx))
-    water <- rep("water", times = nrow(waterAnx))
     
     print("FACTOR SAMPLE SIZES")
     print("Food")
@@ -75,12 +72,9 @@
     print(nrow(medicalAnx))
     print("Emotional:")
     print(nrow(emotionalAnx))
-    print("Water:")
-    print(nrow(waterAnx))
     
-    categories <- c(food,shelter,medical,emotional,water)
-    anxByCat <- c(foodAnx[,6],shelterAnx[,6],medicalAnx[,6],emotionalAnx[,6],
-                  waterAnx[,6])
+    categories <- c(food,shelter,medical,emotional)
+    anxByCat <- c(foodAnx[,5],shelterAnx[,5],medicalAnx[,5],emotionalAnx[,5])
     
     #making new datatable to show anxiety by category
     dataByCat <- data.frame(categories,anxByCat)
@@ -93,15 +87,13 @@
             ylab = "Anxiety")
     
     par(mfrow = c(2, 3))
-    hist(foodAnx[,6],main="Anxiety for Individuals with Food Needs",
+    hist(foodAnx[,5],main="Anxiety for Individuals with Food Needs",
          xlab="Anxiety")
-    hist(shelterAnx[,6],main="Anxiety for Individuals with Shelter Needs",
+    hist(shelterAnx[,5],main="Anxiety for Individuals with Shelter Needs",
          xlab="Anxiety")
-    hist(medicalAnx[,6],main="Anxiety for Individuals with Medical Needs",
+    hist(medicalAnx[,5],main="Anxiety for Individuals with Medical Needs",
          xlab="Anxiety")
-    hist(emotionalAnx[,6],main="Anxiety for Individuals with Emotional Needs",
-         xlab="Anxiety")
-    hist(waterAnx[,6],main="Anxiety for Individuals with Water Needs",
+    hist(emotionalAnx[,5],main="Anxiety for Individuals with Emotional Needs",
          xlab="Anxiety")
     
 
@@ -125,8 +117,8 @@
   # MODEL
   
   model <- vglm(anxiety ~ foodNeeds + shelterNeeds + medicalNeeds + 
-                  emotionalNeeds + waterNeeds,
-                family = multinomial, xdata = trainData)
+                  emotionalNeeds,
+                family = cumulative, xdata = trainData)
   
   #training
   predicted_probs <- predict(model, type = "response")
