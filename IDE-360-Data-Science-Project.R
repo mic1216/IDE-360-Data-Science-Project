@@ -6,6 +6,8 @@
   #install.packages("psych")
   #install.packages("caTools") 
   #install.packages("VGAM")
+  #install.packages("caret")
+  library(caret)
   library(VGAM)
   library(caTools)
   library("psych")
@@ -94,37 +96,80 @@
 # LOGISTIC REGRESSION ANALYSIS
   
   # SPLITTING DATA SET
-  
+  data[data == -99] <- 0
   split <- sample.split(data, SplitRatio = 0.8)
   
   trainData <- subset(data, split == "TRUE")
-  testData <- subset(data, split == "FALSE")
+  testData <- subset(data, split == "FALSE",select=-anxiety)
+
+
+  print("Train Data")
+  print(summary(trainData$anxiety))
+
   
-  # MODEL
+  print("Test Data")
+  print(describe(testData))
+
+  
+  
+  # MODEL 1
+  
+  model <- vglm(anxiety ~ foodNeeds + shelterNeeds + medicalNeeds + 
+                  emotionalNeeds,
+                family = cumulative, xdata = trainData)
+  
+  #training
+  predicted_probs <- predict(model, type = "response")
+  predicted_classes <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 
+                                                                  1, which.max)])
+  
+  #applying
+  newProbs <- predict(model, newdata = testData, type = "response")
+  predictions <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 1, 
+                                                            which.max)])
+  
+  print("predictions")
+  print(summary(predictions))
+  
+  #histograms
+  par(mfrow = c(2, 1))
+  hist(trainData$anxiety,main="Actual Anxiety",
+       xlab="Anxiety")
+  hist(predictions,main="Predicted Anxiety",
+       xlab="Anxiety")
+  
+  # MODEL 2
+  
   model <- vglm(anxiety ~ foodNeeds + shelterNeeds + medicalNeeds + 
                   emotionalNeeds + waterNeeds,
                 family = multinomial, xdata = trainData)
   
   #training
   predicted_probs <- predict(model, type = "response")
-  predicted_classes <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 1, which.max)])
+  predicted_classes <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 
+                                                                  1, which.max)])
   
   #applying
   newProbs <- predict(model, newdata = testData, type = "response")
-  predictions <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 1, which.max)])
+  predictions <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 1, 
+                                                            which.max)])
   
   print("predictions")
-  print(describe(predictions))
+  print(summary(predictions))
   
 # VERIFICATION
   
   #histograms
-  par(mfrow = c(2, 3))
-  hist(anxiety,main="Actual Anxiety",
+  par(mfrow = c(2, 1))
+  hist(trainData$anxiety,main="Actual Anxiety",
        xlab="Anxiety")
   hist(predictions,main="Predicted Anxiety",
        xlab="Anxiety")
-  
+
   #confusion matrix
+  
+  
+  cm <- confusionMatrix(data = predictions, reference = testData$anxiety)
+  print(cm)
   
   
