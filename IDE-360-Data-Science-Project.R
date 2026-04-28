@@ -100,7 +100,7 @@
   split <- sample.split(data, SplitRatio = 0.8)
   
   trainData <- subset(data, split == "TRUE")
-  testData <- subset(data, split == "FALSE",select=-anxiety)
+  testData <- subset(data, split == "FALSE")
 
 
   print("Train Data")
@@ -110,35 +110,7 @@
   print("Test Data")
   print(describe(testData))
 
-  
-  
-  # MODEL 1
-  
-  model <- vglm(anxiety ~ foodNeeds + shelterNeeds + medicalNeeds + 
-                  emotionalNeeds,
-                family = cumulative, xdata = trainData)
-  
-  #training
-  predicted_probs <- predict(model, type = "response")
-  predicted_classes <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 
-                                                                  1, which.max)])
-  
-  #applying
-  newProbs <- predict(model, newdata = testData, type = "response")
-  predictions <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 1, 
-                                                            which.max)])
-  
-  print("predictions")
-  print(summary(predictions))
-  
-  #histograms
-  par(mfrow = c(2, 1))
-  hist(trainData$anxiety,main="Actual Anxiety",
-       xlab="Anxiety")
-  hist(predictions,main="Predicted Anxiety",
-       xlab="Anxiety")
-  
-  # MODEL 2
+  # MODEL
   
   model <- vglm(anxiety ~ foodNeeds + shelterNeeds + medicalNeeds + 
                   emotionalNeeds + waterNeeds,
@@ -159,17 +131,34 @@
   
 # VERIFICATION
   
-  #histograms
+  # HISTOGRAMS
   par(mfrow = c(2, 1))
   hist(trainData$anxiety,main="Actual Anxiety",
        xlab="Anxiety")
   hist(predictions,main="Predicted Anxiety",
        xlab="Anxiety")
 
-  #confusion matrix
+  # CONFUSION MATRIX
   
+  conMat <- data.frame(matrix(0,ncol = 4, nrow = 4))
+  colnames(conMat) <- c("1", "2", "3","4")
   
-  cm <- confusionMatrix(data = predictions, reference = testData$anxiety)
-  print(cm)
+  for (prediction in 1:length(predictions))
+  {
+    conMat[anxiety[prediction],predictions[prediction]] <- 
+        conMat[anxiety[prediction],predictions[prediction]] + 1
+  }
+    
+  View(conMat)
+
+  
+  # false positive
+  # false negative
+  
+  # The stupid dumb variables and model suck so stupid dumb much that we cant 
+  # use the stupid dumb confusionMatrix function which.. is stupid and dumb. So.
+  #cm <- confusionMatrix(data = predictions, reference = as.factor(anxiety))
+  #print(cm)
+  
   
   
