@@ -66,6 +66,18 @@
     emotional <- rep("emotional", times = nrow(emotionalAnx))
     water <- rep("water", times = nrow(waterAnx))
     
+    print("FACTOR SAMPLE SIZES")
+    print("Food")
+    print(nrow(foodAnx))
+    print("Shelter:")
+    print(nrow(shelterAnx))
+    print("Medical:")
+    print(nrow(medicalAnx))
+    print("Emotional:")
+    print(nrow(emotionalAnx))
+    print("Water:")
+    print(nrow(waterAnx))
+    
     categories <- c(food,shelter,medical,emotional,water)
     anxByCat <- c(foodAnx[,6],shelterAnx[,6],medicalAnx[,6],emotionalAnx[,6],
                   waterAnx[,6])
@@ -126,8 +138,10 @@
   predictions <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 1, 
                                                             which.max)])
   
-  print("predictions")
-  print(summary(predictions))
+  print("predictions:")
+  print(describe(predictions))
+  print("actual:")
+  print(describe(anxiety))
   
 # VERIFICATION
   
@@ -149,11 +163,17 @@
         conMat[anxiety[prediction],predictions[prediction]] + 1
   }
     
-  View(conMat)
-
+  # METRICS
   
-  # false positive
-  # false negative
+  #accuracy
+  
+  accuracy <- (conMat[1,1] + conMat[2,2] + conMat[3,3] + conMat[4,4]) / length(predictions)
+  print("ACCURACY:")
+  print(accuracy)
+  
+  #precision
+  
+  
   
   # The stupid dumb variables and model suck so stupid dumb much that we cant 
   # use the stupid dumb confusionMatrix function which.. is stupid and dumb. So.
