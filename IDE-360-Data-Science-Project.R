@@ -109,7 +109,7 @@
   
   # SPLITTING DATA SET
   data[data == -99] <- 0
-  split <- sample.split(data, SplitRatio = 0.8)
+  split <- sample.split(data$anxiety, SplitRatio = 0.8)
   
   trainData <- subset(data, split == "TRUE")
   testData <- subset(data, split == "FALSE")
@@ -135,7 +135,7 @@
   
   #applying
   newProbs <- predict(model, newdata = testData, type = "response")
-  predictions <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 1, 
+  predictions <- as.numeric(colnames(newProbs)[apply(newProbs, 1, 
                                                             which.max)])
   
   print("predictions:")
@@ -147,7 +147,7 @@
   
   # HISTOGRAMS
   par(mfrow = c(2, 1))
-  hist(trainData$anxiety,main="Actual Anxiety",
+  hist(testData$anxiety,main="Actual Anxiety",
        xlab="Anxiety")
   hist(predictions,main="Predicted Anxiety",
        xlab="Anxiety")
@@ -159,8 +159,8 @@
   
   for (prediction in 1:length(predictions))
   {
-    conMat[anxiety[prediction],predictions[prediction]] <- 
-        conMat[anxiety[prediction],predictions[prediction]] + 1
+    conMat[testData$anxiety[prediction],predictions[prediction]] <- 
+        conMat[testData$anxiety[prediction],predictions[prediction]] + 1
   }
     
   # METRICS
