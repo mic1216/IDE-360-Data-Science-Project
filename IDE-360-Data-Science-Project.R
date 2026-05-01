@@ -7,8 +7,10 @@
   #install.packages("caTools") 
   #install.packages("VGAM")
   #install.packages("caret")
+  #install.packages('MASS')
 
   # LOAD
+  library(MASS)
   library(caret)
   library(VGAM)
   library(caTools)
@@ -17,8 +19,6 @@
 # IMPORTING DATA
 
   data <- read.csv("HTOPS_HPS_2502_PUF.csv")
-  
-  print(length(data$EXPNS_DIF != -99))
 
 # CLEANING DATA AND CREATING SUBSET
 
@@ -27,7 +27,7 @@
                                     NDX14_FRESHWATER == 1 | NDX14_ELECTRICITY == 1 
                                     | NDX14_NONE_NEEDED == 1) & CREATEART != -99
                  & EXPNS_DIF != -99 & SOCIAL2_first != -99 & SELFCARE != -99 
-                 & ANYWORK != -99)
+                 & ANYWORK != -99) #Cleaning non-responses
   
 # EXTRACTING VARIABLES OF INTEREST FROM THE DATA SETS
 
@@ -49,7 +49,7 @@
   #response variable
   anxiety <- data$ANXIOUS #How anxious an individual has felt over the past two weeks
   
-  #creating new data table, exclusively w/ variables of interest
+  #NEW DATA TABLE - exclusively w/ variables of interest
   
   data <- data.frame(needsScore,art,expnsDifclty,lonely,selfCare,employment,anxiety)
   
@@ -65,12 +65,29 @@
   print("Needs Score Description")
   print(describe(needsScore))
   cat("\n")
-  #DATA SETUP
-    
+  
+  print("Art Participation Description")
+  print(describe(art))
+  cat("\n")
+  
+  print("Difficulty w/ Expenses Description")
+  print(describe(employment))
+  cat("\n")
+  
+  print("Needs Score Description")
+  print(describe(expnsDifclty))
+  cat("\n")
+  
+  print("Loneliness Description")
+  print(describe(lonely))
+  cat("\n")
+  
+  print("Self Care Description")
+  print(describe(selfCare))
+  cat("\n")
   
   
-  #PLOTS
-    # BOX PLOTS
+# BOX PLOTS
     par(mfrow = c(2, 3))
     boxplot(anxiety ~ needsScore,
             main = "Anxiety by Needs Score",
@@ -98,13 +115,8 @@
             ylab = "Anxiety")
     
     
-    #HISTOGRAMS
-    #par(mfrow = c(2, 3))
-    hist(needsScore, main="Needs Scores", xlab="Needs Score")
-    
-    
 
-# LOGISTIC REGRESSION ANALYSIS
+# ORDINAL LOGISTIC REGRESSION ANALYSIS
   
   # SPLITTING DATA SET
   
@@ -123,20 +135,17 @@
 
   # MODEL
   
-  model <- vglm(anxiety ~ needsScore + art + expnsDifclty + 
+  #Training
+  model <- polr(as.factor(anxiety) ~ needsScore + art + expnsDifclty + 
                   lonely + selfCare + employment,
-                family = cumulative, xdata = trainData)
+                data = trainData, Hess = TRUE)
   
-  #training
-  predicted_probs <- predict(model, type = "response")
-  predicted_classes <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 
+  
+  #Applying
+  predicted_probs <- as.data.frame(predict(model, newdata = testData, type = "probs"))
+  predictions <- as.numeric(colnames(predicted_probs)[apply(predicted_probs, 
                                                                   1, which.max)])
-  
-  #applying
-  newProbs <- predict(model, newdata = testData, type = "response")
-  predictions <- as.numeric(colnames(newProbs)[apply(newProbs, 1, 
-                                                            which.max)])
-  
+  #Print statements
   print("predictions:")
   print(describe(predictions))
   print("actual:")
@@ -153,9 +162,11 @@
 
   # CONFUSION MATRIX
   
+  #Initializing
   conMat <- data.frame(matrix(0,ncol = 4, nrow = 4))
   colnames(conMat) <- c("1", "2", "3","4")
   
+  #Filling
   for (prediction in 1:length(predictions))
   {
     conMat[testData$anxiety[prediction],predictions[prediction]] <- 
@@ -169,15 +180,4 @@
   accuracy <- (conMat[1,1] + conMat[2,2] + conMat[3,3] + conMat[4,4]) / length(predictions)
   print("ACCURACY:")
   print(accuracy)
-  
-  #precision
-  
-  
-  
-  # The stupid dumb variables and model suck so stupid dumb much that we cant 
-  # use the stupid dumb confusionMatrix function which.. is stupid and dumb. So.
-  #cm <- confusionMatrix(data = predictions, reference = as.factor(anxiety))
-  #print(cm)
-  
-  
   
