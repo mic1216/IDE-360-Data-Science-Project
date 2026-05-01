@@ -181,3 +181,5 @@
   print("ACCURACY:")
   print(accuracy)
   
+  print(summary(model))
+  
