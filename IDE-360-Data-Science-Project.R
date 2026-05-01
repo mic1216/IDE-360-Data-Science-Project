@@ -31,14 +31,14 @@
   shelterNeeds<- data$NDX14_SHELTER #Inviduals whose most immediate need is shelter
   medicalNeeds <- data$NDX14_MEDICAL #Inviduals whose most immediate need is medical
   emotionalNeeds <- data$NDX14_EMOTIONAL #Inviduals whose most immediate need is emotional
-  electricalNeeds <- NDX14_ELECTRICITY #Inviduals whose most immediate need is electricity
-  noNeeds <- NDX14_NONE_NEEDED #Individuals who do not have any immediate need
+  electricalNeeds <- data$NDX14_ELECTRICITY #Inviduals whose most immediate need is electricity
+  noNeeds <- data$NDX14_NONE_NEEDED #Individuals who do not have any immediate need
    
   #response variable
   anxiety <- data$ANXIOUS #How anxious an individual has felt over the past two weeks
   
   #creating new data table, exclusively w/ variables of intrests
-  data <- data.frame(foodNeeds,shelterNeeds,medicalNeeds,emotionalNeeds,
+  data <- data.frame(foodNeeds,shelterNeeds,medicalNeeds,emotionalNeeds,electricalNeeds
                      anxiety)
 
 # EXPLORATORY DATA ANALYSIS
