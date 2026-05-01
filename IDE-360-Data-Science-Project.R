@@ -1,12 +1,14 @@
 # INSTALL AND LOAD PACKAGES
 
-  # NB: IF PACKAGE NOT INSTALLED, UNCOMMENT NEXT LINE OF CODE. RECOMMENT TO AVOID 
+  # NB: IF PACKAGE NOT INSTALLED, UNCOMMENT NEXT BLOCK OF CODE. RECOMMENT TO AVOID 
   # ERROR MESSAGES
-  
+
   #install.packages("psych")
   #install.packages("caTools") 
   #install.packages("VGAM")
   #install.packages("caret")
+
+  # LOAD
   library(caret)
   library(VGAM)
   library(caTools)
@@ -22,7 +24,7 @@
                                     NDX14_MEDICAL == 1 | NDX14_EMOTIONAL == 1 | 
                                     NDX14_FRESHWATER == 1 | NDX14_ELECTRICITY == 1 
                                     | NDX14_NONE_NEEDED == 1))
-
+  
 # EXTRACTING VARIABLES OF INTEREST FROM THE DATA SETS
 
   #explanatory variables
@@ -31,15 +33,18 @@
   shelterNeeds<- data$NDX14_SHELTER #Inviduals whose most immediate need is shelter
   medicalNeeds <- data$NDX14_MEDICAL #Inviduals whose most immediate need is medical
   emotionalNeeds <- data$NDX14_EMOTIONAL #Inviduals whose most immediate need is emotional
+  waterNeeds <- data$NDX14_FRESHWATER #Inviduals whose most immediate need is water
   electricalNeeds <- data$NDX14_ELECTRICITY #Inviduals whose most immediate need is electricity
-  noNeeds <- data$NDX14_NONE_NEEDED #Individuals who do not have any immediate need
    
   #response variable
   anxiety <- data$ANXIOUS #How anxious an individual has felt over the past two weeks
   
   #creating new data table, exclusively w/ variables of intrests
-  data <- data.frame(foodNeeds,shelterNeeds,medicalNeeds,emotionalNeeds,electricalNeeds
-                     anxiety)
+  needs <- data.frame(foodNeeds,shelterNeeds,medicalNeeds,emotionalNeeds,waterNeeds,
+                      electricalNeeds) #table of needs by individual
+  needs[needs == -99] <- 0
+  needsScore <- rowSums(needs)
+  
 
 # EXPLORATORY DATA ANALYSIS
 
@@ -101,7 +106,7 @@
 # LOGISTIC REGRESSION ANALYSIS
   
   # SPLITTING DATA SET
-  data[data == -99] <- 0
+  
   split <- sample.split(data$anxiety, SplitRatio = 0.8)
   
   trainData <- subset(data, split == "TRUE")
