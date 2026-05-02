@@ -118,6 +118,10 @@
 
 # ORDINAL LOGISTIC REGRESSION ANALYSIS
   
+  # Convert anxiety to ordered factor
+  data$anxiety <- factor(data$anxiety,levels = sort(unique(data$anxiety)),
+                         ordered = TRUE)
+    
   # SPLITTING DATA SET
   
   split <- sample.split(data$anxiety, SplitRatio = 0.8)
@@ -136,9 +140,8 @@
   # MODEL
   
   #Training
-  model <- polr(as.factor(anxiety) ~ needsScore + art + expnsDifclty + 
-                  lonely + selfCare + employment,
-                data = trainData, Hess = TRUE)
+  model <- polr(anxiety ~ needsScore + art + expnsDifclty + lonely + selfCare + 
+                  employment, data = trainData, Hess = TRUE)
   
   
   #Applying
