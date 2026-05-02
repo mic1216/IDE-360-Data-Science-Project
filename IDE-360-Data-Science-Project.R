@@ -164,23 +164,21 @@
   # CONFUSION MATRIX
   
   #Initializing
-  conMat <- data.frame(matrix(0,ncol = 4, nrow = 4))
+  conMat <- data.frame(matrix(0, ncol = 4, nrow = 4))
   colnames(conMat) <- c("1", "2", "3","4")
+  rownames(conMat) <- c("1", "2", "3","4")
   
   #Filling
-  for (prediction in 1:length(predictions))
-  {
-    conMat[testData$anxiety[prediction],predictions[prediction]] <- 
-        conMat[testData$anxiety[prediction],predictions[prediction]] + 1
+  for (i in 1:length(predictions)) {
+    actuali <- as.numeric(testData$anxiety[i])# convert ordered factor->numeric
+    predi   <- as.numeric(predictions[i])#Ensure consistency
+    conMat[actuali, predi] <- conMat[actuali, predi] + 1
   }
-    
+  
   # METRICS
+  accuracy <- sum(diag(as.matrix(conMat))) / length(predictions)
   
-  #accuracy
-  
-  accuracy <- (conMat[1,1] + conMat[2,2] + conMat[3,3] + conMat[4,4]) / length(predictions)
   print("ACCURACY:")
   print(accuracy)
   
   print(summary(model))
-  
