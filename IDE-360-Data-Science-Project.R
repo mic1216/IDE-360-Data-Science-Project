@@ -158,10 +158,8 @@
   
   # HISTOGRAMS
   par(mfrow = c(2, 1))
-  hist(testData$anxiety,main="Actual Anxiety",
-       xlab="Anxiety")
-  hist(predictions,main="Predicted Anxiety",
-       xlab="Anxiety")
+  hist(as.numeric(testData$anxiety), main = "Actual Anxiety", xlab = "Anxiety")
+  hist(as.numeric(predictions), main = "Predicted Anxiety", xlab = "Anxiety")
 
   # CONFUSION MATRIX
   
